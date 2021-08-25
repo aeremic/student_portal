@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="functions.js"></script>
+    <link rel="stylesheet" href="colors.css" type="text/css">
+    <script src="jqueryFunctionsProfesor.js" type="text/javascript"></script>
+    <title>Profesorska strana</title>
+</head>
+<body class="bg-dark">
+<!--Glavni container-->
+<div class="container text-white">
+    <h3 class="text-center p-5">Strana profesora</h3>
+    <button type="button" class="btn btn-danger m-1" id="povratak">Povratak</button>
+
+    <!--Korisnik-->
+    <div class="float-right">
+        <div class="ml-auto nav-flex-icons float-right">
+            <!--https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg-->
+            <img src="usericon.png" class="rounded z-depth-0 mb-3 mr-3"
+                 alt="avatar image" height="45">
+        </div>
+        <p id="imeUlogovanog" class="float-right mr-3 mt-2 font-weight-bold" th:text="${trenutniKorisnik}"></p>
+    </div>
+
+    <!--Glavni border-->
+    <div class="border border-info rounded p-3 m-1 mb-5">
+        <!--Collapse dugme-->
+        <button class="btn btn-success mr-sm-3 mt-3 btn-block btn-lg" type="button" data-toggle="collapse"
+                data-target="#collapsePredmeti" aria-expanded="false" aria-controls="collapsePredmeti">
+            Prikazi predmete
+        </button>
+
+        <div class="collapse mt-3" id="collapsePredmeti">
+            <br>
+
+            <!--Tabela predmeta-->
+            <table class="table text-white text-center table-responsive-sm">
+                <thead class="thead-light">
+                <tr>
+                    <th>Naziv predmeta</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="predmet : ${listPredmeta}">
+                    <span th:if="${predmet.imeProfesora == trenutniKorisnik}">
+                        <td th:text="${predmet.imePredmeta}"></td>
+                    </span>
+
+                    <!--
+                    <td>
+                        <button type="button" class="btn btn-danger obrisiPredmet" data-toggle="modal"
+                                data-target="#obrisiPredmetModal">Obrisi
+                        </button>
+                    </td>
+                    -->
+                </tr>
+                </tbody>
+            </table> <!--Tabela predmeta-->
+        </div>
+        <br>
+
+        <!--Collapse dugme-->
+        <button class="btn btn-success mr-sm-3 mb-3 btn-block btn-lg" type="button" data-toggle="collapse"
+                data-target="#collapsePrijave" aria-expanded="false" aria-controls="collapsePrijave">
+            Prikazi prijave
+        </button>
+
+        <div class="collapse mt-3" id="collapsePrijave">
+            <br>
+
+            <!--Tabela prijava-->
+            <table class="table text-white text-center table-responsive-sm">
+                <thead class="thead-light">
+                <tr>
+                    <th>Naziv ispita</th>
+                    <th>Ime studenta</th>
+                    <th>Ocena</th>
+                    <th>Ocenite</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ocenivanje : ${listOcenjivanja}">
+                    <td th:text="${ocenivanje.nazivPredmeta}"></td>
+                    <td th:text="${ocenivanje.profesor}"></td>
+                    <td th:text="${ocenivanje.ocena}"></td>
+                    <td>
+                        <div th:if="${ocenivanje.ocena == 'Neocenjen'}">
+                            <button type="button" class="btn btn-primary editOcena"
+                                    data-toggle="modal" data-target="#editOcenaModal" id="editOcena"
+                                    th:attr="data-id=${ocenivanje.idStudenta},data-idpredmeta=${ocenivanje.idPredmeta}">Ocenite
+                            </button>
+                        </div>
+                        <div th:unless="${ocenivanje.ocena == 'Neocenjen'}">
+                            <button type="button" class="btn btn-primary editOcena"
+                                    data-toggle="modal" data-target="#editOcenaModal" id="editOcena"
+                                    th:attr="data-id=${ocenivanje.idStudenta},data-idpredmeta=${ocenivanje.idPredmeta}" disabled>Ocenite
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table> <!--Tabela prijava-->
+        </div>
+    </div> <!--Glavni border-->
+
+    <footer class="page-footer font-small pt-4">
+        <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href="https://imi.pmf.kg.ac.rs/"> imi</a>
+        </div>
+    </footer>
+
+    <!-- Modal za editovanje ocene-->
+    <div class="modal fade" id="editOcenaModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ocenjivanje</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!--<div class="modal-body"></div>-->
+                <div class="modal-footer">
+                    <form class="form-inline pb-1" action="">
+                        <div class="form-group mr-sm-3">
+                            <select class="form-control ocenaIzmena">
+                                <option value="5" selected>5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                        </div>
+                        </select>
+                </div>
+                </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="editPotvrdiOcena" type="button" class="btn btn-primary">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!--Glavni container-->
+</body>
+</html>

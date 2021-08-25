@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="colors.css" type="text/css">
+    <script src="functions.js" type="text/javascript"></script>
+    <script src="jqueryFunctionsAdmin.js" type="text/javascript"></script>
+    <title>Strana administratora</title>
+</head>
+<body class="bg-dark">
+<!--Glavni container-->
+<div class="container text-white">
+    <h3 class="text-center p-5">Strana administratora</h3>
+    <button type="button" class="btn btn-danger m-1" id="povratak">Povratak</button>
+
+    <!--Korisnik-->
+    <div class="float-right">
+        <div class="ml-auto nav-flex-icons float-right">
+            <!--https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg-->
+            <img src="usericon.png" class="rounded z-depth-0 mb-3 mr-3"
+                 alt="avatar image" height="45">
+        </div>
+        <p id="imeUlogovanog" class="float-right mr-3 mt-2 font-weight-bold">Administrator</p>
+    </div>
+
+    <!--Glavni border-->
+    <div class="border border-info rounded p-3 m-1 mb-5">
+        <!--Collapse dugme-->
+        <button class="btn btn-success mr-sm-3 mt-3 btn-block btn-lg" type="button" data-toggle="collapse"
+                data-target="#collapseKorisnici" aria-expanded="false" aria-controls="collapseKorisnici">
+            Prikazi korisnike
+        </button>
+
+        <div class="collapse mt-3" id="collapseKorisnici">
+            <!--Forma za korisnike-->
+            <form class="form-inline pb-1" action="">
+                <div class="form-group mr-sm-3">
+                    <input type="text" class="form-control mr-2" placeholder="Unesite ime korisnika" name="korisnikIme"
+                           id="korisnikIme">
+                    <input type="text" class="form-control " placeholder="Unesite prezime korisnika"
+                           name="korisnikPrezime" id="korisnikPrezime">
+                </div>
+                <div class="form-group mr-sm-3">
+                    <select class="form-control uloga" id="tip">
+                        <option value="profesor" selected>Profesor</option>
+                        <option value="student">Student</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success mr-sm-3 ml-3" id="dodajKorisnika">Dodaj</button>
+            </form> <!--Forma za korisnike-->
+            <br>
+
+            <!--Tabela korisnika-->
+            <table class="table text-white text-center table-responsive-sm">
+                <thead class="thead-light">
+                <tr>
+                    <th>Ime i prezime</th>
+                    <th>Uloga</th>
+                    <th>Izmenite korisnika</th>
+                    <th>Obrisite korisnika</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="korisnik : ${listKorisnika}">
+                    <td th:text="${korisnik.ime} + ' ' + ${korisnik.prezime}"></td>
+                    <td th:text="${korisnik.uloga}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary editKorisnika" th:attr="data-id=${korisnik.ID}"
+                                data-toggle="modal" data-target="#editKorisnikaModal">Izmeni
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger obrisiKorisnika" th:attr="data-id=${korisnik.ID}"
+                                data-toggle="modal" data-target="#obrisiKorisnikaModal">Obrisi
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table> <!--Tabela korisnika-->
+        </div>
+        <br>
+
+        <!--Collapse dugme-->
+        <button class="btn btn-success mr-sm-3 mb-3 btn-block btn-lg" type="button" data-toggle="collapse"
+                data-target="#collapsePredmeti" aria-expanded="false" aria-controls="collapsePredmeti">
+            Prikazi predmete
+        </button>
+
+        <div class="collapse mt-3" id="collapsePredmeti">
+            <!--Forma za predmete-->
+            <form class="form-inline pb-1 mb-3" action="">
+                <div class="form-group mr-sm-3">
+                    <input type="text" class="form-control" placeholder="Unesti naziv predmeta" name="predmetIme"
+                           id="nazivPredmeta">
+                </div>
+                <div class="form-group mr-sm-3">
+                    <select class="form-control nastavnik">
+                        <div th:each="korisnik : ${listKorisnika}">
+                            <div th:if="${korisnik.uloga == 'Profesor'}">
+                                <option th:text="${korisnik.ime} + ' ' + ${korisnik.prezime}"></option>
+                            </div>
+                        </div>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success mr-sm-3 ml-3" id="dodajPredmet">Dodaj</button>
+            </form> <!--Forma za predmete-->
+
+            <!--Tabela korisnika-->
+            <table class="table text-white text-center table-responsive-sm">
+                <thead class="thead-light">
+                <tr>
+                    <th>Naziv predmeta</th>
+                    <th>Predmetni nastavnik</th>
+                    <th>Izmenite predmet</th>
+                    <th>Obrisite predmet</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="predmet : ${listPredmeta}">
+                    <td th:text="${predmet.imePredmeta}"></td>
+                    <td th:text="${predmet.imeProfesora}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary editPredmet" th:attr="data-id=${predmet.ID}"
+                                data-toggle="modal" data-target="#editPredmetModal">Izmeni
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger obrisiPredmet" th:attr="data-id=${predmet.ID}"
+                                data-toggle="modal" data-target="#obrisiPredmetModal">Obrisi
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table> <!--Tabela korisnika-->
+        </div>
+
+    </div> <!--Glavni border-->
+
+    <!-- Modal za brisanje korisnika-->
+    <div class="modal fade" id="obrisiKorisnikaModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Brisanje korisnika</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Da li ste sigurni da zelite da obrisete <!--<span class="idkorisnika"></span>.--> korisnika?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="obrisiPotvrdiKorisnik" type="button" class="btn btn-danger">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal za brisanje predmeta-->
+    <div class="modal fade" id="obrisiPredmetModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Brisanje predmeta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Da li ste sigurni da zelite da obrisete <!--<span class="idpredmeta"></span>.--> predmet?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="obrisiPotvrdiPredmet" type="button" class="btn btn-danger">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal za editovanje korisnika-->
+    <div class="modal fade" id="editKorisnikaModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Izmena korisnika <!--<span class="idkorisnika"></span>--></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline pb-1" action="">
+                        <div class="form-group mr-sm-3">
+                            <input type="text" class="form-control mb-2 mr-2" placeholder="Ime korisnika"
+                                   name="korisnikIme" id="korisnikImeIzmena">
+                            <input type="text" class="form-control mb-2" placeholder="Prezime korisnika"
+                                   name="korisnikPrezime" id="korisnikPrezimeIzmena">
+                        </div>
+                        <div class="form-group mr-sm-3">
+                            <select class="form-control uloga" id="tipIzmena">
+                                <option value="profesor" selected>Profesor</option>
+                                <option value="student">Student</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="editPotvrdiKorisnik" type="button" class="btn btn-primary">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal za editovanje predmeta-->
+    <div class="modal fade" id="editPredmetModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Izmena predmeta <!--<span class="idpredmeta"></span>--></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline pb-1" action="">
+                        <div class="form-group mr-sm-3 mb-2">
+                            <input type="text" class="form-control" placeholder="Naziv predmeta" name="predmetIme"
+                                   id="predmetImeIzmena">
+                        </div>
+                        <div class="form-group mr-sm-3 mb-2">
+                            <select class="form-control nastavnikIzmena">
+                                <div th:each="korisnik : ${listKorisnika}">
+                                    <div th:if="${korisnik.uloga == 'Profesor'}">
+                                        <option th:text="${korisnik.ime} + ' ' + ${korisnik.prezime}"></option>
+                                    </div>
+                                </div>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="editPotvrdiPredmet" type="button" class="btn btn-primary">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!--Glavni container-->
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="functions.js"></script>
+    <link rel="stylesheet" href="colors.css" type="text/css">
+    <script src="jqueryFunctionsStudent.js" type="text/javascript"></script>
+    <title>Studentska strana</title>
+</head>
+<body class="bg-dark">
+<!--Glavni container-->
+<div class="container text-white">
+
+    <!--Header img-->
+    <div class="mt-4 mb-4 text-center">
+        <img src="header.png" class="mx-auto d-block rounded" alt="" style="width:100%;">
+    </div>
+
+    <button type="button" class="btn btn-danger m-1" id="povratak">Povratak</button>
+
+    <!--Korisnik-->
+    <div class="float-right">
+        <div class="ml-auto nav-flex-icons float-right">
+            <!--https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg-->
+            <img src="usericon.png" class="rounded z-depth-0 mb-3 mr-3"
+                 alt="avatar image" height="45">
+        </div>
+        <p id="imeUlogovanog" class="float-right mr-3 mt-2 font-weight-bold" th:text="${trenutniKorisnik}"></p>
+    </div>
+
+    <!--Glavni border-->
+    <div class="border border-info rounded p-3 m-1 mb-5">
+        <!--Collapse dugme-->
+        <button class="btn btn-success mr-sm-3 mt-3 btn-block btn-lg" type="button" data-toggle="collapse"
+                data-target="#collapsePredmeti" aria-expanded="false" aria-controls="collapsePredmeti">
+            Prikazi predmete
+        </button>
+
+        <div class="collapse mt-3" id="collapsePredmeti">
+            <!--Forma za predmete-->
+            <form class="form-inline pb-1" action="">
+                <div class="form-group mr-sm-3">
+                    <select class="form-control predmet">
+                        <option selected>Izaberi predmet za slusanje</option>
+                        <th:block th:each="predmet : ${listPredmeta}">
+                            <option value="admin" th:text="${predmet.imePredmeta}"></option>
+                        </th:block>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success mr-sm-3" id="izaberiPredmet">Izaberi</button>
+            </form> <!--Forma za predmete-->
+            <br>
+
+            <!--Tabela predmeta-->
+            <table class="table text-white text-center table-responsive-sm">
+                <thead class="thead-light">
+                <tr>
+                    <th>Naziv predmeta</th>
+                    <th>Predmetni nastavnik</th>
+                    <th>Prijavi predmet</th>
+                    <th>Obrisi predmet</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="slusanje : ${listSlusanje}">
+                    <td th:text="${slusanje.imePredmeta}"></td>
+                    <td th:text="${slusanje.imeProfesora}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary prijaviPredmet" th:attr="data-id=${slusanje.ID}"
+                                data-toggle="modal" data-target="#prijaviPredmetModal">Prijavi
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger obrisiPredmet" th:attr="data-id=${slusanje.ID}"
+                                data-toggle="modal" data-target="#obrisiPredmetModal">Obrisi
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table> <!--Tabela predmeta-->
+        </div>
+        <br>
+
+        <!--Collapse dugme-->
+        <button class="btn btn-success mr-sm-3 mb-3 btn-block btn-lg" type="button" data-toggle="collapse"
+                data-target="#collapseIspiti" aria-expanded="false" aria-controls="collapseIspiti">
+            Prikazi prijave
+        </button>
+
+        <div class="collapse mt-3" id="collapseIspiti">
+            <br>
+
+            <!--Tabela ispita-->
+            <table class="table text-white text-center table-responsive-sm">
+                <thead class="thead-light">
+                <tr>
+                    <th>Naziv ispita</th>
+                    <th>Ispitivac</th>
+                    <th>Ocena</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="prijava : ${listPrijava}">
+                    <td th:text="${prijava.nazivPredmeta}"></td>
+                    <td th:text="${prijava.profesor}"></td>
+                    <td th:text="${prijava.ocena}"></td>
+                </tr>
+                </tbody>
+            </table> <!--Tabela ispita-->
+        </div>
+    </div> <!--Glavni border-->
+
+    <footer class="page-footer font-small pt-4">
+        <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href="https://imi.pmf.kg.ac.rs/"> imi</a>
+        </div>
+    </footer>
+
+    <!-- Modal za brisanje predmeta-->
+    <div class="modal fade" id="obrisiPredmetModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Brisanje predmeta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Da li ste sigurni da zelite da obrisete <!--<span class="idpredmeta"></span>.--> predmet?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="obrisiPotvrdiPredmet" type="button" class="btn btn-danger">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal za prijavljivanje ispita-->
+    <div class="modal fade" id="prijaviPredmetModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Prijavljivanje predmeta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Da li ste sigurni da zelite da prijavite <!--<span class="idpredmeta"></span>.--> predmet?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <button id="prijaviPotvrdiPredmet" type="button" class="btn btn-primary">Potvrdi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!--Glavni container-->
+</body>
+</html>
